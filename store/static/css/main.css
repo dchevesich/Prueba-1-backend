@@ -39,9 +39,7 @@ html, body {
   color: #888; /* Color para el autor */
 }
 
-h1,h2,h3,h4,h5,h6{
-	color:hsl(0, 0%, 30%);
-}
+
 
 .box-element{
 	box-shadow:hsl(0, 0%, 80%) 0 0 16px;
@@ -96,9 +94,6 @@ body{
 	border-radius: 0 0 4px 4px;
 }
 
-.bg-dark{
-	background-color: #313131!important;
-}
 
 #cart-icon{
 	width:25px;
@@ -172,10 +167,6 @@ body{
 main {
 	flex: 1; /* Hace que el contenido principal ocupe el espacio disponible */
 }
-footer {
-    background-color: #6d6d6d; /* Color de fondo del footer */
-    color: white; /* Color del texto */
-    text-align: center;
-    padding: 10px 0;
-}
+
+
 
