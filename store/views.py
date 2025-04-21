@@ -13,34 +13,34 @@ def store(request):
 
     seleccionados = random.sample(productos, 3)
 
-    context = {"seleccionados": seleccionados}
+    reseñas = [
+        {"reseña": "Muy buen producto!"},
+        {"reseña": "Excelente!"},
+        {"reseña": "Bueno"},
+
+    ]
+    reseña_aleatoria = random.choice(reseñas)
+    context = {"seleccionados": seleccionados, "reseñas": reseña_aleatoria}
 
     return render(request, 'store/store.html', context)
 
 
 def cart(request):
 
-    context = {}
-
-    return render(request, 'store/cart.html', context)
+    return render(request, 'store/cart.html')
 
 
 def checkout(request):
 
-    context = {}
-
-    return render(request, 'store/checkout.html', context)
+    return render(request, 'store/checkout.html')
 
 
 def form(request):
 
-    context = {}
-
-    return render(request, 'store/form.html', context)
+    return render(request, 'store/form.html')
 
 
 def login(request):
 
-    context = {}
-
+    context = {"bienvenido": "Ingresa tu cuenta"}
     return render(request, 'store/login.html', context)
