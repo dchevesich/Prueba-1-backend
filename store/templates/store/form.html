@@ -1,12 +1,12 @@
 {% extends 'store/main.html' %}
 {% load static %}
 
-{% block title %}Formulario de Contacto{% endblock %}
+{% block title %}Formulario de Registro{% endblock %}
 
 {% block content %}
 <section class="mt-8 py-5">
   <div class="container">
-    <h2 class="text-center mb-4">Formulario de Contacto</h2>
+    <h2 class="text-center mb-4">Formulario de Registro</h2>
     <form method="post">
       {% csrf_token %}
       <div class="mb-3">
@@ -30,12 +30,9 @@
         <label for="phone" class="form-label">Teléfono</label>
         <input type="tel" class="form-control" id="phone" name="phone" required>
       </div>
-      <div class="mb-3">
-        <label for="comment" class="form-label">Comentario</label>
-        <textarea class="form-control" id="comment" name="comment" rows="4" required></textarea>
-      </div>
+  
       
-      <button type="submit" class="btn btn-primary">Enviar</button>
+      <button type="submit" class="btn btn-primary">Completar Registro</button>
     </form>
   </div>
 </section>
