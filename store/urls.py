@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     
@@ -12,10 +14,8 @@ urlpatterns = [
     path('clientes/', views.lista_clientes, name='clientes'),#lista clientes
     path('cliente/<int:pk>/update', views.clienteUpdateView,name='editar_cliente'),#editar clientes
     path('cliente/<int:pk>/eliminar',views.clienteEliminarView, name='eliminar_cliente'),#eliminar cleinte
-    
-    path('productos/', views.ProductoListView.as_view(), name="productos"),
-    path('producto/add/', views.ProductoCreateView.as_view(), name="producto-add"),
-    path('producto/<int:pk>/update/', views.ProductoUpdateView.as_view(), name="producto-update"),
-    path('producto/<int:pk>/delete/', views.ProductoDeleteView.as_view(), name="producto-delete"),
 
 ]
+
+if settings.DEBUG: # Solo sirve archivos de medios si DEBUG es True
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

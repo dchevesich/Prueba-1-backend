@@ -3,32 +3,12 @@ from .models import Cliente, Producto, Categoria
 from django.contrib import messages 
 import random
 from django.db import models
-from django.views import generic
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.urls import reverse_lazy
 
 # Create your views here.
 
-# region 
-# Danko  
 def store(request):
-    productos = [
-        {"imagen": "images/1.jpg", "precio": 100},
-        {"imagen": "images/2.jpg", "precio": 200},
-        {"imagen": "images/3.jpg", "precio": 300},
-    ]
-
-    seleccionados = random.sample(productos, 3)
-
-    reseñas = [
-        {"reseña": "Muy buen producto!"},
-        {"reseña": "Excelente!"},
-        {"reseña": "Bueno"},
-
-    ]
-    reseña_aleatoria = random.choice(reseñas)
-    context = {"seleccionados": seleccionados, "reseñas": reseña_aleatoria}
-
+    producto_obtenidos = Producto.objects.all()
+    context = {"producto": producto_obtenidos}
     return render(request, 'store/store.html', context)
 
 def cart(request):
@@ -116,21 +96,4 @@ def clienteEliminarView(request, pk):
     return redirect(lista_clientes)
 
 
-class ProductoListView(generic.ListView):
-    model = Producto
-
-# Vistas de edición genérica.
-class ProductoCreateView(CreateView):
-    model = Producto
-    fields = '__all__'
-    initial={'stock':0,}
-    
-class ProductoUpdateView(UpdateView):
-    model = Producto
-    fields = ['nombre','precio','stock','imagen','categoria']
-    template_name_suffix = '_update_form'
-    
-class ProductoDeleteView(DeleteView):
-    model = Producto
-    success_url = reverse_lazy('productos')
 
