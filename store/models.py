@@ -12,3 +12,29 @@ class Cliente(models.Model):
     def __str__(self):
         # Cuando veas un objeto Cliente, te mostrará su nombre completo
         return self.full_name
+    
+# Modelo de Producto
+class Producto(models.Model):
+    nombre = models.CharField(max_length=100, help_text="Nombre del Producto")
+    precio = models.IntegerField(null=True, help_text="Precio")
+    stock = models.IntegerField(null=True, help_text="Cantidad en stock")
+    # Se agrega la imagen del producto.
+    imagen = models.ImageField(upload_to='productos', null=True)
+    categoria = models.ForeignKey('Categoria', on_delete=models.SET_NULL, null=True)
+    
+    def __str__(self):
+        return f"{self.nombre} - {self.categoria}"
+    
+    def get_absolute_url(self):
+        return reverse("producto_detail", args=[str(self.id)])
+    
+# Modelo de Categoria de Producto
+class Categoria(models.Model):
+    nombre = models.CharField(max_length=100, help_text="Categoría del Producto")
+    
+    def __str__(self):
+        return f"{self.nombre}"
+    
+    def get_absolute_url(self):
+        return reverse("categoria_detail", args=[str(self.id)])
+    

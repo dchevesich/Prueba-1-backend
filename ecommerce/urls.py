@@ -18,6 +18,11 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
+    #este path solo debe estar el urls del proyecto principal
     path('admin/', admin.site.urls),
-    path('', include('store.urls')),  # Incluye las URLs de la app store
+    
+    # Incluye las URLs de la app store
+    path('', include('store.urls')),
+    
+    
 ]

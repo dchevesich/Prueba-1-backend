@@ -42,9 +42,6 @@ INSTALLED_APPS = [
 
     # aqui se agregan las apps de la tienda
     'store.apps.StoreConfig',  # Personalizacion de la app store
-
-
-
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
