@@ -1,196 +1,61 @@
-{% extends 'store/main.html' %} {% block title %}lista de clientes{% endblock %}
+{% extends 'store/main.html' %}
+{% block title %}Lista de Clientes{% endblock %}
 {% block content %}
 
-<h1>Clientes Registrados</h1>
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Clientes Registrados</h1>
 
-<table class="table table-hover">
-  <thead>
-    <tr>
-      <th scope="col">id</th>
-      <th scope="col">Nombre Completo</th>
-      <th scope="col">Email</th>
-      <th scope="col">Direccion</th>
-      <th scope="col">Fecha de Nac.</th>
-      <th scope="col">Telefono</th>
-      <th scope="col">Fecha ingreso</th>
-    </tr>
-  </thead>
+    <div class="overflow-x-auto bg-white rounded-lg shadow-md">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">id</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre Completo</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Direccion</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha de Nac.</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Telefono</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha ingreso</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                </tr>
+            </thead>
 
-  <tbody>
-    {% for cliente in clientes %}
-    <tr>
-      <td>{{ cliente.id }}</td>
-      <td>{{ cliente.full_name }}</td>
-      <td>{{ cliente.email }}</td>
-      <td>{{ cliente.address }}</td>
-      <td>{{ cliente.dob }}</td>
-      <td>{{ cliente.phone }}</td>
-      <td>{{ cliente.fecha_registro }}</td>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for cliente in clientes %}
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ cliente.id }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ cliente.full_name }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ cliente.email }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ cliente.address }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ cliente.dob }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ cliente.phone }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ cliente.fecha_registro }}</td>
 
-      <!--Botones para editar/eliminar Cliente-->
-      <td>
-        <!--boton editar-->
-        <div class="d-grid gap-2 d-md-block">
-          <button
-            id="edit"
-            class="btn btn-primary"
-            type="button"
-            data-bs-toggle="modal"
-            data-bs-target="#modalEditar{{cliente.id}}"
-          >
-            <i class="bi bi-pencil-square"></i>
-          </button>
-          /
-          <!--boton eliminar-->
-          <button
-            id="delete"
-            class="btn btn-primary"
-            type="button"
-            data-bs-toggle="modal"
-            data-bs-target="#modalEliminar{{ cliente.id }}"
-          >
-            <i class="bi bi-trash3"></i>
-          </button>
-        </div>
-      </td>
-
-      <!--Modal edit-->
-      <div
-        class="modal fade"
-        id="modalEditar{{cliente.id}}"
-        tabindex="-1"
-        aria-labelledby="modalEditarLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <form method="post" action="{% url 'editar_cliente' cliente.id %}">
-              {% csrf_token %}
-              <div class="modal-header">
-                <h5 class="modal-title" id="modalEditarLabel">
-                  Editar Cliente
-                </h5>
-                <button
-                  type="button"
-                  class="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Cerrar"
-                ></button>
-              </div>
-              <div class="modal-body">
-                <!-- Nombre -->
-                <div class="mb-3">
-                  <label for="nombre" class="form-label">Nombre</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    name="full_name"
-                    id="nombre"
-                    value="{{ cliente.full_name }}"
-                    placeholder="{{ cliente.full_name }}"
-                  />
-                </div>
-                <!-- correo -->
-                <div class="mb-3">
-                  <label for="email" class="form-label"
-                    >Correo electrónico</label
-                  >
-                  <input
-                    type="email"
-                    class="form-control"
-                    name="email"
-                    id="email"
-                    value="{{ cliente.email }}"
-                    placeholder="{{ cliente.email }}"
-                  />
-                </div>
-                <!-- Direccion -->
-                <div class="mb-3">
-                  <label for="email" class="form-label">Direccion</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    name="address"
-                    id="Direccion"
-                    value="{{ cliente.address }}"
-                    placeholder="{{ cliente.address }}"
-                  />
-                </div>
-                <!-- Agrega más campos según tu modelo -->
-              </div>
-              <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-bs-dismiss="modal"
-                >
-                  Cancelar
-                </button>
-                <button type="submit" class="btn btn-primary">
-                  Guardar cambios
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      <!--Modal Eliminar-->
-      <div
-        class="modal fade"
-        id="modalEliminar{{ cliente.id }}"
-        tabindex="-1"
-        aria-labelledby="modalEliminarLabel{{ cliente.id }}"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <!-- Encabezado -->
-            <div class="modal-header bg-danger text-white">
-              <h5 class="modal-title" id="modalEliminarLabel{{ cliente.id }}">
-                Confirmar eliminación
-              </h5>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Cerrar"
-              ></button>
-            </div>
-
-            <!-- Cuerpo -->
-            <div class="modal-body text-center">
-              ¿Estás seguro de que deseas eliminar a
-              <strong>{{ cliente.nombre }}</strong>?
-            </div>
-
-            <!-- Pie -->
-            <div class="modal-footer justify-content-center">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Cancelar
-              </button>
-
-              <!-- Formulario de eliminación -->
-              <form
-                method="post"
-                action="{% url 'eliminar_cliente' cliente.id %}"
-              >
-                {% csrf_token %}
-                <button type="submit" class="btn btn-danger">Aceptar</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </tr>
-    {% empty %}
-    <tr>
-      <td colspan="6">No hay clientes registrados.</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div class="flex items-center space-x-2">
+                            <a
+                                href="{% url 'editar_cliente' cliente.id %}"
+                                class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-3 rounded-md inline-flex items-center text-sm transition duration-300"
+                            >
+                                Editar
+                            </a>
+                            <a
+                                href="{% url 'eliminar_cliente' cliente.id %}"
+                                class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded-md inline-flex items-center text-sm transition duration-300"
+                            >
+                                Eliminar
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">No hay clientes registrados.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 
 {% endblock %}

@@ -1,99 +1,77 @@
-{% extends 'store/main.html' %} {% load static %} {% block title %}Formulario de
-Registro{% endblock %} {% block content %}
-<section class="mt-8 py-5">
-  <div class="container">
-    <h2 class="text-center mb-4">Formulario de Registro</h2>
-    <div class="col-md-6 col-lg-5 mx-auto">
+{% extends 'store/main.html' %}
+{% load static %}
+
+{% block title %}Formulario de Registro{% endblock %}
+
+{% block content %}
+<section class="py-8">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Formulario de Registro</h2>
+
+    <div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg">
       <form method="post">
         {% csrf_token %}
-        <div class="mb-3">
-          <label for="fullName" class="form-label">Nombre completo</label>
-          <input
-            type="text"
-            class="form-control"
-            id="fullName"
-            name="fullName"
-            required
-          />
-        </div>
-        <div class="mb-3">
-          <label for="email" class="form-label">Correo electrónico</label>
-          <input
-            type="email"
-            class="form-control"
-            id="email"
-            name="email"
-            required
-          />
-        </div>
-        <div class="mb-3">
-          <label for="address" class="form-label">Dirección/calle</label>
-          <input
-            type="text"
-            class="form-control"
-            id="calle"
-            name="address"
-            required
-          />
-          <label for="address" class="form-label">N° calle</label>
-          <input
-            type="text"
-            class="form-control"
-            id="numcalle"
-            name="address"
-            required
-          />
-        </div>
-        <div class="mb-3">
-          <label for="phone" class="form-label">Teléfono</label>
-          <input
-            type="tel"
-            class="form-control"
-            id="phone"
-            name="phone"
-            required
-          />
-        </div>
+        
+        {# Mensajes de Django (éxito o error) #}
+        {% if messages %}
+            <ul class="messages mb-6">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="p-3 mb-2 rounded {% if message.tags == 'success' %}bg-green-100 text-green-700{% elif message.tags == 'error' %}bg-red-100 text-red-700{% endif %}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
 
-        <button type="submit" class="btn btn-primary">
+        {# Campos para el usuario (username, password, password2, email) #}
+        {# Estos campos vienen de user_form #}
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Información de Cuenta</h3>
+        {% for field in user_form %}
+            <div class="mb-4">
+                <label for="{{ field.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">{{ field.label }}:</label>
+                {# Renderizado manual del input para aplicar clases directamente y asegurar el tipo #}
+                <input 
+                    type="{% if field.name == 'password' or field.name == 'password1' or field.name == 'password2' %}password{% elif field.name == 'email' %}email{% else %}text{% endif %}"
+                    name="{{ field.name }}" 
+                    id="{{ field.id_for_label }}" 
+                    value="{% if field.value %}{{ field.value }}{% endif %}" 
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500" 
+                    {% if field.field.required %}required{% endif %}
+                >
+                {% if field.help_text %}
+                    <p class="text-gray-600 text-xs italic mt-1">{{ field.help_text }}</p>
+                {% endif %}
+                {% for error in field.errors %}
+                    <p class="text-red-500 text-xs italic mt-1">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        {# Campos para el cliente (full_name, address, dob, phone) #}
+        {# Estos campos vienen de cliente_form #}
+        <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-4">Información Personal</h3>
+        {% for field in cliente_form %}
+            <div class="mb-4">
+                <label for="{{ field.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">{{ field.label }}:</label>
+                {# Renderizado manual del input para aplicar clases directamente y asegurar el tipo #}
+                <input 
+                    type="{% if field.name == 'dob' %}date{% elif field.name == 'phone' %}tel{% else %}text{% endif %}"
+                    name="{{ field.name }}" 
+                    id="{{ field.id_for_label }}" 
+                    value="{% if field.value %}{{ field.value }}{% endif %}" 
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500" 
+                    {% if field.field.required %}required{% endif %}
+                >
+                {% if field.help_text %}
+                    <p class="text-gray-600 text-xs italic mt-1">{{ field.help_text }}</p>
+                {% endif %}
+                {% for error in field.errors %}
+                    <p class="text-red-500 text-xs italic mt-1">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 mt-6">
           Completar Registro
         </button>
-        <!-- Modal de éxito -->
-        <div
-          class="modal fade"
-          id="modalRegistroExitoso"
-          tabindex="-1"
-          aria-labelledby="modalExitoLabel"
-          aria-hidden="true"
-        >
-          <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-success">
-              <div class="modal-header bg-success text-white">
-                <h5 class="modal-title" id="modalExitoLabel">
-                  ¡Registro exitoso!
-                </h5>
-                <button
-                  type="button"
-                  class="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Cerrar"
-                ></button>
-              </div>
-              <div class="modal-body text-center">
-                El usuario se ha registrado correctamente.
-              </div>
-              <div class="modal-footer justify-content-center">
-                <button
-                  type="button"
-                  class="btn btn-success"
-                  data-bs-dismiss="modal"
-                >
-                  Aceptar
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
       </form>
     </div>
   </div>

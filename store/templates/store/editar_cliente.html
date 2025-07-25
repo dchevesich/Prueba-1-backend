@@ -1,0 +1,72 @@
+{% extends 'store/main.html' %}
+{% load static %}
+
+{% block title %}Editar Cliente{% endblock %}
+
+{% block content %}
+<section class="py-8">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Editar Cliente: {{ cliente.full_name }}</h2>
+
+    <div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg">
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-4">
+          <label for="fullName" class="block text-gray-700 text-sm font-bold mb-2">Nombre completo</label>
+          <input
+            type="text"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500"
+            id="fullName"
+            name="full_name"
+            value="{{ cliente.full_name }}"
+            required
+          />
+        </div>
+        <div class="mb-4">
+          <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Correo electrónico</label>
+          <input
+            type="email"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500"
+            id="email"
+            name="email"
+            value="{{ cliente.email }}"
+            required
+          />
+        </div>
+        <div class="mb-4">
+          <label for="address" class="block text-gray-700 text-sm font-bold mb-2">Dirección</label>
+          <input
+            type="text"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500"
+            id="address"
+            name="address"
+            value="{{ cliente.address }}"
+            required
+          />
+        </div>
+    
+        <div class="mb-6">
+          <label for="phone" class="block text-gray-700 text-sm font-bold mb-2">Teléfono</label>
+          <input
+            type="tel"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500"
+            id="phone"
+            name="phone"
+            value="{{ cliente.phone }}"
+            required
+          />
+        </div>
+
+        <div class="flex items-center justify-between">
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300">
+                Guardar Cambios
+            </button>
+            <a href="{% url 'clientes' %}" class="inline-block align-baseline font-bold text-sm text-gray-500 hover:text-gray-800">
+                Cancelar
+            </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
