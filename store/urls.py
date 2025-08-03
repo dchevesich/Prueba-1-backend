@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from . import views, api
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import LoginView, LogoutView
@@ -20,5 +20,7 @@ urlpatterns = [
     path('checkout/', views.checkout, name='checkout'),
     path('update_item/', views.updateItem, name="update_item"),
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
+    path('api/productos/', api.ProductoListCreateAPIView.as_view(), name='producto-list-api'),
+    path('api/productos/<int:pk>/', api.ProductoRetrieveUpdateDestroyAPIView.as_view(), name='producto-detail-api'),
 
 ]

@@ -43,7 +43,7 @@ function getCookie(name) {
 function updateUserOrder(productId, action, csrftoken) {
     console.log('Sending data...');
 
-    var url = '/update_item/'; // La URL de tu vista updateItem en Django
+    var url = updateItemUrl; // La URL de tu vista updateItem en Django
 
     fetch(url, {
         method: 'POST', // Es una solicitud POST

@@ -18,13 +18,19 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static 
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 urlpatterns = [
     #este path solo debe estar el urls del proyecto principal
     path('admin/', admin.site.urls),
     
     # Incluye las URLs de la app store
-    path('', include('store.urls')),
+    path('store/', include('store.urls')),
+
+    # URLs para la documentación de la API (drf-spectacular)
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    # Optional UI:
+    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
 
 ]
 

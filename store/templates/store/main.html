@@ -8,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
     var user = '{{ request.user }}';
+    var updateItemUrl = '{% url "update_item" %}'; // <-- NUEVA LÍNEA
     </script>
 
     <title>{% block title %}Inicio{% endblock %}</title>

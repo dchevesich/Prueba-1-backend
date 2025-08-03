@@ -1,17 +1,21 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Cliente, Producto, Categoria
-from django.contrib import messages 
+from .models import Cliente, Producto, Categoria, Order, OrderItem, ShippingAddress # Importar los nuevos modelos
+from django.contrib import messages
 import random
 from django.http import JsonResponse
 import json
 from django.db import models
 from datetime import datetime
-from django.contrib.auth.models import User 
+from django.contrib.auth.models import User
 from .forms import CustomUserCreationForm, ClienteForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView as OriginalLoginView
 from django.contrib.auth import login as auth_login
+# from rest_framework.generics import ListAPIView # Ya no se usa aquí
+# from .serializers import ProductoSerializer # Ya no se usa aquí
 import requests
+import uuid # Para generar transaction_id
+
 # Create your views here.
 
 def store(request):
@@ -67,8 +71,94 @@ def updateItem(request):
         return JsonResponse('Method not allowed', status=405)
     
 def checkout(request):
- 
-    return render(request, 'store/checkout.html')
+    # Lógica para GET (mostrar el carrito en el checkout)
+    cart_from_session = request.session.get('cart', {})
+    items = []
+    order_summary = {'get_cart_total': 0, 'get_cart_items': 0}
+
+    for product_id, item_data in cart_from_session.items():
+        try:
+            product = Producto.objects.get(id=product_id)
+            quantity = item_data['quantity']
+            total = (product.precio or 0) * quantity
+
+            items.append({
+                'product': product,
+                'quantity': quantity,
+                'get_total': total,
+            })
+            order_summary['get_cart_total'] += total
+            order_summary['get_cart_items'] += quantity
+        except Producto.DoesNotExist:
+            print(f"DEBUG: Producto con ID {product_id} no encontrado en la base de datos para checkout.")
+        except Exception as e:
+            print(f"DEBUG: Error procesando ítem {product_id} en carrito para checkout: {e}")
+
+    if request.method == 'POST':
+        # Lógica para POST (procesar el pedido)
+        if request.user.is_authenticated:
+            customer = request.user.cliente # Asumiendo que cada User tiene un Cliente asociado
+        else:
+            # Manejar usuarios no autenticados si es necesario, por ahora, solo autenticados
+            messages.error(request, "Debes iniciar sesión para completar el pedido.")
+            return redirect('login') # O a la página de checkout de nuevo
+
+        # Obtener datos del formulario
+        address = request.POST.get('address')
+        city = request.POST.get('city')
+        state = request.POST.get('state')
+        zipcode = request.POST.get('zipcode')
+
+        # Crear el objeto Order
+        order = Order.objects.create(
+            customer=customer,
+            complete=False, # Por ahora, el pedido no está completo hasta que se pague
+            transaction_id=str(uuid.uuid4()) # Generar un ID único para la transacción
+        )
+
+        # Crear OrderItems a partir del carrito de la sesión
+        for product_id, item_data in cart_from_session.items():
+            try:
+                product = Producto.objects.get(id=product_id)
+                quantity = item_data['quantity']
+                OrderItem.objects.create(
+                    product=product,
+                    order=order,
+                    quantity=quantity
+                )
+            except Producto.DoesNotExist:
+                print(f"DEBUG: Producto con ID {product_id} no encontrado al crear OrderItem.")
+            except Exception as e:
+                print(f"DEBUG: Error al crear OrderItem para producto {product_id}: {e}")
+
+        # Crear la dirección de envío
+        ShippingAddress.objects.create(
+            customer=customer,
+            order=order,
+            address=address,
+            city=city,
+            state=state,
+            zipcode=zipcode,
+        )
+
+        # Marcar el pedido como completo (simulando pago exitoso)
+        order.complete = True
+        order.save()
+
+        # Vaciar el carrito de la sesión
+        del request.session['cart']
+        request.session.modified = True
+        messages.success(request, "¡Tu pedido ha sido realizado con éxito!")
+        return redirect('store') # Redirigir a la página principal o a una de confirmación
+
+    # Lógica para GET (mostrar el formulario de checkout)
+    context = {
+        'items': items,
+        'order': order_summary,
+        'shipping_required': True # Puedes usar esto para mostrar/ocultar campos de envío
+    }
+    return render(request, 'store/checkout.html', context)
+
 
 def cart(request):
     cart_from_session = request.session.get('cart', {})
@@ -102,10 +192,7 @@ def cart(request):
         except Producto.DoesNotExist:
             # Si el producto no se encuentra en la DB (ej. fue borrado)
             print(f"DEBUG: Producto con ID {product_id} no encontrado en la base de datos.")
-            # Opcional: Eliminar este ítem inválido de la sesión del carrito
-            # del cart_from_session[product_id]
-            # request.session['cart'] = cart_from_session
-            # request.session.modified = True
+          
         except Exception as e:
             print(f"DEBUG: Error procesando ítem {product_id} en carrito: {e}")
 

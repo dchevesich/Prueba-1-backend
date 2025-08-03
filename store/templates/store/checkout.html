@@ -11,43 +11,25 @@
         {# Sección de Información de Envío y Pago #}
         <div class="bg-white rounded-lg shadow-md p-6">
             <h2 class="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">Información de Envío</h2>
-            <form>
+            <form method="POST" action="{% url 'checkout' %}">
                 {% csrf_token %}
                 <div class="mb-4">
                     <label for="address" class="block text-gray-700 text-sm font-bold mb-2">Dirección de Envío:</label>
-                    <input type="text" id="address" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500" placeholder="Calle, Número, Ciudad, País" required>
+                    <input type="text" id="address" name="address" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500" placeholder="Calle, Número" required>
                 </div>
                 <div class="mb-4">
-                    <label for="zipcode" class="block text-gray-700 text-sm font-bold mb-2">Código Postal:</label>
-                    <input type="text" id="zipcode" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500" required>
+                    <label for="city" class="block text-gray-700 text-sm font-bold mb-2">Ciudad:</label>
+                    <input type="text" id="city" name="city" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500" placeholder="Ciudad" required>
+                </div>
+                <div class="mb-4">
+                    <label for="state" class="block text-gray-700 text-sm font-bold mb-2">Estado/Provincia:</label>
+                    <input type="text" id="state" name="state" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500" placeholder="Estado/Provincia" required>
                 </div>
                 <div class="mb-6">
-                    <label for="delivery_option" class="block text-gray-700 text-sm font-bold mb-2">Método de Envío:</label>
-                    <select id="delivery_option" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500">
-                        <option value="standard">Envío Estándar (3-5 días)</option>
-                        <option value="express">Envío Express (1-2 días)</option>
-                    </select>
+                    <label for="zipcode" class="block text-gray-700 text-sm font-bold mb-2">Código Postal:</label>
+                    <input type="text" id="zipcode" name="zipcode" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500" required>
                 </div>
 
-                <h2 class="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2 mt-8">Información de Pago</h2>
-                <div class="mb-4">
-                    <label for="card_name" class="block text-gray-700 text-sm font-bold mb-2">Nombre en la Tarjeta:</label>
-                    <input type="text" id="card_name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500" required>
-                </div>
-                <div class="mb-4">
-                    <label for="card_number" class="block text-gray-700 text-sm font-bold mb-2">Número de Tarjeta:</label>
-                    <input type="text" id="card_number" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500" placeholder="XXXX-XXXX-XXXX-XXXX" required>
-                </div>
-                <div class="grid grid-cols-2 gap-4 mb-6">
-                    <div>
-                        <label for="expiry_date" class="block text-gray-700 text-sm font-bold mb-2">Fecha de Vencimiento:</label>
-                        <input type="text" id="expiry_date" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500" placeholder="MM/AA" required>
-                    </div>
-                    <div>
-                        <label for="cvv" class="block text-gray-700 text-sm font-bold mb-2">CVV:</label>
-                        <input type="text" id="cvv" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500" placeholder="XXX" required>
-                    </div>
-                </div>
                 <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition duration-300 w-full">Confirmar Pedido</button>
             </form>
         </div>
