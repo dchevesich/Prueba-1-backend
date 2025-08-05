@@ -212,8 +212,8 @@ def fake_store_products_view(request):
         # URL del endpoint para obtener todos los productos de la Fake Store API
         api_url = "https://fakestoreapi.com/products"
 
-        # Realiza la solicitud HTTP GET a la API
-        response = requests.get(api_url)
+        # Realiza la solicitud HTTP GET a la API con un timeout de 10 segundos
+        response = requests.get(api_url, timeout=10)
 
         # Si la solicitud fue exitosa (código de estado 200)
         if response.status_code == 200:
@@ -245,8 +245,8 @@ def fake_store_product_detail_view(request, pk): # La vista recibe el pk del pro
         # URL del endpoint para obtener un producto específico por su ID
         api_url = f"https://fakestoreapi.com/products/{pk}"
         
-        # Realiza la solicitud HTTP GET a la API
-        response = requests.get(api_url)
+        # Realiza la solicitud HTTP GET a la API con un timeout de 10 segundos
+        response = requests.get(api_url, timeout=10)
         
         # Si la solicitud fue exitosa (código de estado 200)
         if response.status_code == 200:
