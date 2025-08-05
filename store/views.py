@@ -205,37 +205,7 @@ def cart(request):
 
 
 def fake_store_products_view(request):
-    products = [] # Lista para almacenar los productos de la API
-    error_message = None # Para manejar posibles errores
-
-    try:
-        # URL del endpoint para obtener todos los productos de la Fake Store API
-        api_url = "https://fakestoreapi.com/products"
-
-        # Realiza la solicitud HTTP GET a la API con un timeout de 10 segundos
-        response = requests.get(api_url, timeout=10)
-
-        # Si la solicitud fue exitosa (código de estado 200)
-        if response.status_code == 200:
-            products = response.json() # Convierte la respuesta JSON a un objeto Python (lista de diccionarios)
-        else:
-            # Si la API devuelve un error (ej. 404, 500)
-            error_message = f"Error al consumir la API: {response.status_code} - {response.text}"
-
-    except requests.exceptions.RequestException as e:
-        # Captura errores de red, conexión, timeouts, etc.
-        error_message = f"Error de conexión con la API: {e}"
-
-    except ValueError as e:
-        # Captura errores si la respuesta no es un JSON válido
-        error_message = f"Error al decodificar la respuesta JSON de la API: {e}"
-
-    context = {
-        'products': products, # Pasa la lista de productos a la plantilla
-        'error_message': error_message # Pasa cualquier mensaje de error
-    }
-
-    return render(request, 'store/fake_store_products.html', context)
+    return render(request, 'store/fake_store_products.html')
 
 def fake_store_product_detail_view(request, pk): # La vista recibe el pk del producto
     product_detail = None

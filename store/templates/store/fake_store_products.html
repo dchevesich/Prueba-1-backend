@@ -7,30 +7,58 @@
 <div class="container mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold text-gray-800 mb-6">Productos de Fake Store API</h1>
 
-    {% if error_message %}
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-            <strong class="font-bold">¡Error!</strong>
-            <span class="block sm:inline">{{ error_message }}</span>
-        </div>
-    {% elif products %}
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
-            {% for product in products %}
-            <div class="bg-white rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 hover:scale-105 flex flex-col">
-                <img class="w-full h-48 object-contain p-4" src="{{ product.image }}" alt="{{ product.title }}">
-                <div class="p-4 flex flex-col flex-grow">
-                    <h6 class="text-lg font-semibold text-gray-900 mb-2 flex-grow">{{ product.title }}</h6>
-                    <p class="text-gray-600 text-sm mb-2 truncate">Categoría: {{ product.category }}</p>
-                    <hr class="my-2 border-gray-200">
-                    <div class="flex justify-between items-center mt-auto">
-                        <span class="text-xl font-bold text-gray-900">${{ product.price|floatformat:2 }}</span>
-                        <a href="{% url 'fake_product_detail' product.id %}" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-3 rounded-md text-sm transition duration-300">Ver Detalles</a>
+    <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
+        <!-- Los productos se cargarán aquí dinámicamente -->
+    </div>
+    <div id="loading-message" class="text-center text-gray-600">
+        <p>Cargando productos...</p>
+    </div>
+    <div id="error-message" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+        <strong class="font-bold">¡Error!</strong>
+        <span class="block sm:inline">No se pudieron cargar los productos de la API.</span>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const productGrid = document.getElementById('product-grid');
+    const loadingMessage = document.getElementById('loading-message');
+    const errorMessage = document.getElementById('error-message');
+
+    fetch('https://fakestoreapi.com/products')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(products => {
+            loadingMessage.style.display = 'none';
+            productGrid.innerHTML = ''; // Limpiar el contenedor
+
+            products.forEach(product => {
+                const productCard = `
+                <div class="bg-white rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 hover:scale-105 flex flex-col">
+                    <img class="w-full h-48 object-contain p-4" src="${product.image}" alt="${product.title}">
+                    <div class="p-4 flex flex-col flex-grow">
+                        <h6 class="text-lg font-semibold text-gray-900 mb-2 flex-grow">${product.title}</h6>
+                        <p class="text-gray-600 text-sm mb-2 truncate">Categoría: ${product.category}</p>
+                        <hr class="my-2 border-gray-200">
+                        <div class="flex justify-between items-center mt-auto">
+                            <span class="text-xl font-bold text-gray-900">${product.price.toFixed(2)}</span>
+                            <a href="/api-productos/${product.id}/" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-3 rounded-md text-sm transition duration-300">Ver Detalles</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p class="text-gray-600">No se pudieron cargar los productos de la API.</p>
-    {% endif %}
-</div>
+                `;
+                productGrid.innerHTML += productCard;
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching products:', error);
+            loadingMessage.style.display = 'none';
+            errorMessage.classList.remove('hidden');
+        });
+});
+</script>
 {% endblock %}
