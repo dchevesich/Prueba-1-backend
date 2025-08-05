@@ -5,43 +5,71 @@
 
 {% block content %}
 <div class="container mx-auto px-4 py-8">
-    {% if error_message %}
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-            <strong class="font-bold">¡Error!</strong>
-            <span class="block sm:inline">{{ error_message }}</span>
-        </div>
+    <div id="product-detail-container">
+        <!-- El detalle del producto se cargará aquí -->
+    </div>
+    <div id="loading-message" class="text-center text-gray-600">
+        <p>Cargando detalle del producto...</p>
+    </div>
+    <div id="error-message" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+        <strong class="font-bold">¡Error!</strong>
+        <span class="block sm:inline" id="error-text">No se pudieron cargar los detalles del producto.</span>
         <a href="{% url 'fake_products' %}" class="block text-center mt-4 text-blue-600 hover:text-blue-800 font-semibold">Volver a Productos API</a>
-    {% elif product %}
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden md:flex">
-            {# Sección de la imagen #}
-            <div class="md:w-1/2 p-6 flex items-center justify-center">
-                <img class="max-w-full max-h-96 object-contain" src="{{ product.image }}" alt="{{ product.title }}">
-            </div>
+    </div>
+</div>
 
-            {# Sección de los detalles #}
-            <div class="md:w-1/2 p-6 flex flex-col justify-between">
-                <div>
-                    <h1 class="text-4xl font-bold text-gray-900 mb-4">{{ product.title }}</h1>
-                    <p class="text-gray-600 mb-4 text-lg">Categoría: <span class="capitalize">{{ product.category }}</span></p>
-                    <p class="text-gray-700 mb-6 text-base">{{ product.description }}</p>
-                    
-                    <div class="flex items-center mb-4">
-                        <span class="text-3xl font-bold text-gray-900 mr-4">${{ product.price|floatformat:2 }}</span>
-                        {# La Fake Store API no tiene campo 'stock', pero podrías simularlo o añadir un mensaje #}
-                        {# <span class="text-green-600 font-semibold">En Stock</span> #}
-                        <span class="text-gray-500 text-sm">Rating: {{ product.rating.rate }} ({{ product.rating.count }} reviews)</span>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const productId = {{ product_id }};
+    const detailContainer = document.getElementById('product-detail-container');
+    const loadingMessage = document.getElementById('loading-message');
+    const errorMessage = document.getElementById('error-message');
+    const errorText = document.getElementById('error-text');
+
+    fetch(`https://fakestoreapi.com/products/${productId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Network response was not ok (status: ${response.status})`);
+            }
+            return response.json();
+        })
+        .then(product => {
+            loadingMessage.style.display = 'none';
+            
+            if (!product) {
+                throw new Error('Producto no encontrado en la API.');
+            }
+
+            const productDetailHtml = `
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden md:flex">
+                <div class="md:w-1/2 p-6 flex items-center justify-center">
+                    <img class="max-w-full max-h-96 object-contain" src="${product.image}" alt="${product.title}">
+                </div>
+                <div class="md:w-1/2 p-6 flex flex-col justify-between">
+                    <div>
+                        <h1 class="text-4xl font-bold text-gray-900 mb-4">${product.title}</h1>
+                        <p class="text-gray-600 mb-4 text-lg">Categoría: <span class="capitalize">${product.category}</span></p>
+                        <p class="text-gray-700 mb-6 text-base">${product.description}</p>
+                        <div class="flex items-center mb-4">
+                            <span class="text-3xl font-bold text-gray-900 mr-4">$${product.price.toFixed(2)}</span>
+                            <span class="text-gray-500 text-sm">Rating: ${product.rating.rate} (${product.rating.count} reviews)</span>
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition duration-300 w-full">Añadir al Carrito</button>
+                        <a href="{% url 'fake_products' %}" class="block text-center mt-4 text-blue-600 hover:text-blue-800 font-semibold">Volver a Productos API</a>
                     </div>
                 </div>
-
-                <div class="mt-6">
-                    <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition duration-300 w-full">Añadir al Carrito</button>
-                    <a href="{% url 'fake_products' %}" class="block text-center mt-4 text-blue-600 hover:text-blue-800 font-semibold">Volver a Productos API</a>
-                </div>
             </div>
-        </div>
-    {% else %}
-        <p class="text-gray-600 text-center">No se pudieron cargar los detalles del producto.</p>
-        <a href="{% url 'fake_products' %}" class="block text-center mt-4 text-blue-600 hover:text-blue-800 font-semibold">Volver a Productos API</a>
-    {% endif %}
-</div>
+            `;
+            detailContainer.innerHTML = productDetailHtml;
+        })
+        .catch(error => {
+            console.error('Error fetching product detail:', error);
+            loadingMessage.style.display = 'none';
+            errorText.textContent = `No se pudieron cargar los detalles del producto. ${error.message}`;
+            errorMessage.classList.remove('hidden');
+        });
+});
+</script>
 {% endblock %}

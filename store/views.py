@@ -207,41 +207,10 @@ def cart(request):
 def fake_store_products_view(request):
     return render(request, 'store/fake_store_products.html')
 
-def fake_store_product_detail_view(request, pk): # La vista recibe el pk del producto
-    product_detail = None
-    error_message = None
-
-    try:
-        # URL del endpoint para obtener un producto específico por su ID
-        api_url = f"https://fakestoreapi.com/products/{pk}"
-        
-        # Realiza la solicitud HTTP GET a la API con un timeout de 10 segundos
-        response = requests.get(api_url, timeout=10)
-        
-        # Si la solicitud fue exitosa (código de estado 200)
-        if response.status_code == 200:
-            product_detail = response.json() # Convierte la respuesta JSON a un objeto Python (diccionario)
-            
-      
-            if not product_detail: 
-                error_message = "Producto no encontrado en la Fake Store API."
-                product_detail = None 
-
-        else:
-            error_message = f"Error al consumir la API: {response.status_code} - {response.text}"
-    
-    except requests.exceptions.RequestException as e:
-        error_message = f"Error de conexión con la API: {e}"
-    
-    except ValueError as e:
-        error_message = f"Error al decodificar la respuesta JSON de la API: {e}"
-
-    context = {
-        'product': product_detail, # Pasa el detalle del producto (o None)
-        'error_message': error_message # Pasa cualquier mensaje de error
-    }
-    
-    return render(request, 'store/fake_store_product_detail.html', context)
+def fake_store_product_detail_view(request, pk):
+    # Simplemente renderiza el template y pasa el ID del producto.
+    # El JavaScript en el template se encargará de buscar los datos.
+    return render(request, 'store/fake_store_product_detail.html', {'product_id': pk})
 
 def form(request):
     if request.method == 'POST':
